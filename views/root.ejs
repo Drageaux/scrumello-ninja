@@ -10,7 +10,9 @@
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="https://api.trello.com/1/client.js?key=<%= process.env.TRELLO_KEY %>"></script>
 <script>
-    var authenticationSuccess = function() { console.log("Successful authentication"); };
+    var authenticationSuccess = function() {
+        console.log("Successful authentication");
+    };
     var authenticationFailure = function() { console.log("Failed authentication"); };
     Trello.authorize({
         type: 'popup',

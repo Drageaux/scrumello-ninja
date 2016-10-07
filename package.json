@@ -18,7 +18,9 @@
     "express": "^4.13.4",
     "mongodb": "^1.4.40",
     "monk": "^1.0.1",
-    "request": "^2.69.0"
+    "request": "^2.69.0",
+    "trello": "^0.5.1",
+    "unirest": "^0.5.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

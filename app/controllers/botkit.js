@@ -4,6 +4,8 @@
 var Botkit = require('botkit');
 var mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/botkit_express_demo';
 var botkit_mongo_storage = require('../../config/botkit_mongo_storage')({mongoUri: mongoUri});
+var unirest = require('unirest');
+var Trello = require("trello");
 
 if (!process.env.SLACK_ID || !process.env.SLACK_SECRET || !process.env.PORT) {
     console.log('Error: Specify SLACK_ID SLACK_SECRET and PORT in environment');
@@ -86,7 +88,17 @@ controller.on('rtm_close', function (bot) {
 
 //CUSTOM DIALOG ===============================================================
 controller.hears(['scrumello', 'ninja', 'daveninja'], 'direct_message', function (bot, message) {
-    bot.reply(message, 'Hello!');
+    trello.getListsOnBoard("2cKLhmkK",
+        function (error, lists) {
+            if (error) {
+                console.log('Could not find lists:', error);
+                bot.reply(message, 'Could not find lists: ' + error);
+            }
+            else {
+                console.log('Found lists:', lists);
+                bot.reply(message, 'Found lists: ' + lists);
+            }
+        });
 });
 
 //DIALOG ======================================================================
