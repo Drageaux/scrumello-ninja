@@ -6,6 +6,7 @@ var mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/botkit_expr
 var botkit_mongo_storage = require('../../config/botkit_mongo_storage')({mongoUri: mongoUri});
 var unirest = require('unirest');
 var Trello = require("trello");
+var trello = new Trello(process.env.TRELLO_KEY, process.env.TRELLO_CLIENT_SECRET);
 
 if (!process.env.SLACK_ID || !process.env.SLACK_SECRET || !process.env.PORT) {
     console.log('Error: Specify SLACK_ID SLACK_SECRET and PORT in environment');
