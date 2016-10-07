@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
-  <body>
-    <h1>Welcome</h1>
-    <center>
-        <a href='https://slack.com/oauth/authorize?client_id=<%= process.env.SLACK_ID %>&redirect_uri=<%= process.env.SLACK_REDIRECT %>new&scope=bot'><img alt="Add to Slack" height="40" width="139" src="/images/add_to_slack.png"></a>
-    </center>
-  </body>
+<body>
+<h1>Welcome</h1>
+<center>
+    <a href='https://slack.com/oauth/authorize?client_id=<%= process.env.SLACK_ID %>&redirect_uri=<%= process.env.SLACK_REDIRECT %>new&scope=bot'><img
+                alt="Add to Slack" height="40" width="139" src="/images/add_to_slack.png"></a>
+</center>
+
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="https://api.trello.com/1/client.js?key=<%= process.env.TRELLO_KEY %>"></script>
+<script>
+    var authenticationSuccess = function() { console.log("Successful authentication"); };
+    var authenticationFailure = function() { console.log("Failed authentication"); };
+    Trello.authorize({
+        type: 'popup',
+        name: 'Scrumello Ninja Bot',
+        scope: {
+            read: 'true',
+            write: 'true'
+        },
+        expiration: 'never',
+        success: authenticationSuccess,
+        error: authenticationFailure
+    });
+</script>
+</body>
 </html>
-
-
-
-
 
 
 

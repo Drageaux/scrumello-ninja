@@ -4,7 +4,8 @@
   "description": "Scrum for Trello Slackbot using Botkit with Express and Mongodb database",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemon": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,5 +19,8 @@
     "mongodb": "^1.4.40",
     "monk": "^1.0.1",
     "request": "^2.69.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
