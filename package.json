@@ -1,0 +1,22 @@
+{
+  "name": "scrumello-ninja",
+  "version": "0.1.0",
+  "description": "Scrum for Trello Slackbot using Botkit with Express and Mongodb database",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "botkit": "^0.2.2",
+    "bson": "^0.5.5",
+    "dotenv": "^2.0.0",
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "mongodb": "^1.4.40",
+    "monk": "^1.0.1",
+    "request": "^2.69.0"
+  }
+}
