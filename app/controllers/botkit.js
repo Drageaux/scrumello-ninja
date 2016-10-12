@@ -11,7 +11,7 @@ var TrelloRequestURL = "https://trello.com/1/OAuthGetRequestToken";
 var TrelloAccessURL = "https://trello.com/1/OAuthGetAccessToken";
 var TrelloAuthorizeURL = "https://trello.com/1/OAuthAuthorizeToken";
 var TrelloClientTokenRequestURL = "https://trello.com/1/connect?key=" + process.env.TRELLO_KEY +
-    "&name=" + appName + "&response_type=token&scope=read,write";
+    "&name=" + appName + "&expiration=never&response_type=token&scope=read,write";
 
 if (!process.env.SLACK_ID || !process.env.SLACK_SECRET || !process.env.PORT) {
     console.log('Error: Specify SLACK_ID SLACK_SECRET and PORT in environment');
@@ -100,29 +100,37 @@ controller.on('rtm_close', function (bot) {
 
 //CUSTOM DIALOG ===============================================================
 controller.hears(["authorize"], "direct_message", function (bot, message) {
+    console.log(message);
+    bot.reply(message, "/trello");
     bot.reply(message, "If you have not authorized me to *make changes to your Trello boards/cards/lists*, " +
         "please allow me to do so by going to this link (" + TrelloClientTokenRequestURL + ")");
     bot.reply(message, "Once you have authorized, Trello will give you a token. Please direct message me " +
         "@scrumello_ninja and say 'token YOUR_TOKEN'");
 });
 
+// TODO: find better way (OAuth) to authorize the bot/app
 controller.hears(["token"], "direct_message", function (bot, message) {
-
+    var inputArr = message.text.split(" ");
+    if (inputArr[0] == "token" && inputArr[1] != null) {
+        var trello = new Trello(process.env.TRELLO_KEY, inputArr);
+        console.log(trello);
+    } else {
+        bot.reply(message, "Please say 'token YOUR_TOKEN'")
+    }
 });
 
 controller.hears(['scrumello', 'ninja', 'daveninja'], 'direct_message', function (bot, message) {
-    var trello = new Trello(process.env.TRELLO_KEY, process.env.TRELLO_CLIENT_SECRET);
-    trello.getListsOnBoard("2cKLhmkK",
-        function (error, lists) {
-            if (error) {
-                console.log('Could not find lists:', error);
-                bot.reply(message, 'Could not find lists: ' + error);
-            }
-            else {
-                console.log('Found lists:', lists);
-                bot.reply(message, 'Found lists: \n' + JSON.stringify(lists, null, 4));
-            }
-        });
+    // trello.getListsOnBoard("2cKLhmkK",
+    //     function (error, lists) {
+    //         if (error) {
+    //             console.log('Could not find lists:', error);
+    //             bot.reply(message, 'Could not find lists: ' + error);
+    //         }
+    //         else {
+    //             console.log('Found lists:', lists);
+    //             bot.reply(message, 'Found lists: \n' + JSON.stringify(lists, null, 4));
+    //         }
+    //     });
 });
 
 //DIALOG ======================================================================
@@ -145,7 +153,7 @@ controller.hears('hello', 'direct_message', function (bot, message) {
 });
 
 controller.hears('^stop', 'direct_message', function (bot, message) {
-    // bot.reply(message, 'Goodbye');
+    bot.reply(message, 'Goodbye');
     // bot.rtm.close();
 });
 
