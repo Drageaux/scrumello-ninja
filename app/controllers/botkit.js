@@ -1,12 +1,17 @@
 //CONFIG===============================================
 
 /* Uses the slack button feature to offer a real time bot to multiple teams */
+var appName = "ScrumelloNinja";
 var Botkit = require('botkit');
 var mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/botkit_express_demo';
 var botkit_mongo_storage = require('../../config/botkit_mongo_storage')({mongoUri: mongoUri});
 var unirest = require('unirest');
 var Trello = require("trello");
-var trello = new Trello(process.env.TRELLO_KEY, process.env.TRELLO_CLIENT_SECRET);
+var TrelloRequestURL = "https://trello.com/1/OAuthGetRequestToken";
+var TrelloAccessURL = "https://trello.com/1/OAuthGetAccessToken";
+var TrelloAuthorizeURL = "https://trello.com/1/OAuthAuthorizeToken";
+var TrelloClientTokenRequestURL = "https://trello.com/1/connect?key=" + process.env.TRELLO_KEY +
+    "&name=" + appName + "&response_type=token&scope=read,write";
 
 if (!process.env.SLACK_ID || !process.env.SLACK_SECRET || !process.env.PORT) {
     console.log('Error: Specify SLACK_ID SLACK_SECRET and PORT in environment');
@@ -67,6 +72,12 @@ controller.on('create_bot', function (bot, team) {
                 } else {
                     convo.say('I am a bot that has just joined your team');
                     convo.say('You must now /invite me to a channel so that I can be of use!');
+
+                    // TODO: Get a client secret from the user
+                    convo.say("If you have not authorized me to *make changes to your Trello boards/cards/lists*, " +
+                        "please allow me to do so by going to this link (" + TrelloClientTokenRequestURL + ")");
+                    convo.say("Once you have authorized, Trello will give you a token. Please direct message me " +
+                        "@scrumello_ninja and say 'token YOUR_TOKEN'");
                 }
             });
 
@@ -88,7 +99,19 @@ controller.on('rtm_close', function (bot) {
 
 
 //CUSTOM DIALOG ===============================================================
+controller.hears(["authorize"], "direct_message", function (bot, message) {
+    bot.reply(message, "If you have not authorized me to *make changes to your Trello boards/cards/lists*, " +
+        "please allow me to do so by going to this link (" + TrelloClientTokenRequestURL + ")");
+    bot.reply(message, "Once you have authorized, Trello will give you a token. Please direct message me " +
+        "@scrumello_ninja and say 'token YOUR_TOKEN'");
+});
+
+controller.hears(["token"], "direct_message", function (bot, message) {
+
+});
+
 controller.hears(['scrumello', 'ninja', 'daveninja'], 'direct_message', function (bot, message) {
+    var trello = new Trello(process.env.TRELLO_KEY, process.env.TRELLO_CLIENT_SECRET);
     trello.getListsOnBoard("2cKLhmkK",
         function (error, lists) {
             if (error) {
@@ -97,7 +120,7 @@ controller.hears(['scrumello', 'ninja', 'daveninja'], 'direct_message', function
             }
             else {
                 console.log('Found lists:', lists);
-                bot.reply(message, 'Found lists: ' + lists);
+                bot.reply(message, 'Found lists: \n' + JSON.stringify(lists, null, 4));
             }
         });
 });
@@ -105,13 +128,25 @@ controller.hears(['scrumello', 'ninja', 'daveninja'], 'direct_message', function
 //DIALOG ======================================================================
 
 controller.hears('hello', 'direct_message', function (bot, message) {
-    bot.reply(message, 'Hello!');
-    bot.api.rtm.open();
+    // if (_bots[bot.config.token]) {
+    //     // already online! do nothing.
+    //     console.log("already online! do nothing.")
+    // }
+    // else {
+    //     bot.startRTM(function (err, bot, message) {
+    //         if (err) {
+    //             console.log("Couldn't start bot RTM")
+    //         }
+    //         else {
+    //             bot.reply(message, 'Hello!');
+    //         }
+    //     });
+    // }
 });
 
 controller.hears('^stop', 'direct_message', function (bot, message) {
-    bot.reply(message, 'Goodbye');
-    bot.rtm.close();
+    // bot.reply(message, 'Goodbye');
+    // bot.rtm.close();
 });
 
 controller.on('direct_message,mention,direct_mention', function (bot, message) {
